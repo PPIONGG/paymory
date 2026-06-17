@@ -1,0 +1,292 @@
+:root {
+  --bg: #faf8f5;
+  --surface: #ffffff;
+  --text: #2b2b2b;
+  --text-soft: #8a8a8a;
+  --border: #ece8e3;
+  --accent: #e07a5f;
+  --accent-dark: #cf6a50;
+  --accent-soft: #fcefe9;
+  --ok: #2e7d32;
+  --err: #c62828;
+
+  /* Who an expense belongs to / who pays — a calm warm/cool pair so the two
+     people read at a glance: Mine = the terracotta brand, Partner = a calm teal,
+     Shared = a warm neutral that sits between them. */
+  --mine: #c4623f;
+  --mine-soft: #fbeae1;
+  --partner: #3d8b7d;
+  --partner-soft: #e6f1ee;
+  --shared: #9a7d52;
+  --shared-soft: #f3ecdf;
+
+  --radius: 14px;
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+
+  font-family: system-ui, 'Segoe UI', Roboto, 'Noto Sans Thai', sans-serif;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+}
+#root {
+  min-height: 100vh;
+}
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.75rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.field label {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+}
+.field input,
+.field select,
+.field textarea {
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #fff;
+  color: var(--text);
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+
+.link-action {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: inherit;
+  padding: 5px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-block;
+}
+.link-action:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+  text-decoration: none;
+}
+.link-action.danger {
+  color: var(--err);
+}
+.link-action.danger:hover {
+  background: #fdecea;
+}
+
+.error {
+  color: var(--err);
+  font-size: 0.9rem;
+  margin: 4px 0 12px;
+}
+.muted {
+  color: var(--text-soft);
+}
+
+/* ===== Phase 6 — polish: motion, focus, app shell, mobile nav ===== */
+
+.btn,
+.link-action,
+.nav-link,
+.bottom-nav a {
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+/* Visible keyboard focus (quality floor) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* App bar — sticky, translucent so content scrolls under it */
+.appbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: saturate(1.4) blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.appbar-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.appbar-brand {
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  text-decoration: none;
+}
+.appbar-brand:hover {
+  text-decoration: none;
+}
+.appbar-nav {
+  display: flex;
+  gap: 18px;
+  flex: 1;
+}
+.nav-link {
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+.nav-link:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+.nav-link.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+.appbar-logout {
+  width: auto;
+  margin-left: auto;
+  padding: 7px 12px;
+  font-size: 0.9rem;
+}
+.app-main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+/* Bottom tab bar — phones only */
+.bottom-nav {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .appbar-nav {
+    display: none;
+  }
+  .app-main {
+    padding-bottom: 88px;
+  }
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    background: rgba(255, 255, 255, 0.93);
+    backdrop-filter: saturate(1.4) blur(10px);
+    border-top: 1px solid var(--border);
+    padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+  }
+  .bottom-nav a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 0;
+    color: var(--text-soft);
+    font-size: 0.67rem;
+    text-decoration: none;
+  }
+  .bottom-nav a:hover {
+    text-decoration: none;
+  }
+  .bottom-nav a.active {
+    color: var(--accent);
+  }
+}
+
+/* Skeleton loading blocks (animation auto-disabled by the reduced-motion rule above) */
+.skeleton {
+  background: #ece7e0;
+  border-radius: 7px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}

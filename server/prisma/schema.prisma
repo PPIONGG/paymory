@@ -1,0 +1,145 @@
+// Paymory database schema — see ../../docs/BLUEPRINT.md and ../../CONTEXT.md
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===== Enums =====
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+}
+
+enum OwnerType {
+  PERSONAL
+  SHARED
+}
+
+enum PayerType {
+  PERSONAL
+  SPLIT
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  BANK_TRANSFER
+  CASH
+  AUTO_DEBIT
+  OTHER
+}
+
+enum ExpenseStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+}
+
+// ===== Models =====
+
+/// The shared container for a couple. Owns all expense data; has 1–2 Members.
+model Workspace {
+  id         String   @id @default(cuid())
+  name       String
+  inviteCode String   @unique
+  createdAt  DateTime @default(now())
+
+  members    User[]
+  categories Category[]
+  expenses   RecurringExpense[]
+  payments   Payment[]
+}
+
+/// A login account. With the MVP 1:1 rule, a User belongs to one Workspace.
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  displayName  String
+  createdAt    DateTime @default(now())
+
+  workspaceId String?
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id])
+
+  ownedExpenses  RecurringExpense[] @relation("ExpenseOwner")
+  paidExpenses   RecurringExpense[] @relation("ExpensePayer")
+  markedPayments Payment[]          @relation("PaymentMarkedBy")
+}
+
+/// An expense category. Seeded with 10 defaults per workspace; custom ones can be added.
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  expenses RecurringExpense[]
+
+  @@unique([workspaceId, name])
+}
+
+/// The standing definition of something paid on a cycle (the template).
+model RecurringExpense {
+  id          String    @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  name     String
+  amount   Decimal @db.Decimal(12, 2)
+  currency String  @default("THB")
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  billingCycle BillingCycle
+  dueDay       Int // day of month (1-31)
+  dueMonth     Int? // month (1-12), only used for YEARLY
+
+  // Owner — whose expense it is (says nothing about who pays)
+  ownerType   OwnerType
+  ownerUserId String?
+  owner       User?   @relation("ExpenseOwner", fields: [ownerUserId], references: [id])
+
+  // Paid by — who actually puts up the money
+  payerType    PayerType
+  payerUserId  String?
+  payer        User?   @relation("ExpensePayer", fields: [payerUserId], references: [id])
+  splitPercent Int?    @default(50) // for SPLIT: first member's share %; other pays the rest
+
+  paymentMethod PaymentMethod @default(OTHER)
+  status        ExpenseStatus @default(ACTIVE)
+  notes         String?
+  link          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payments Payment[]
+}
+
+/// A record that one expense was settled for one month. Snapshots the amount paid.
+model Payment {
+  id          String    @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  expenseId String
+  expense   RecurringExpense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  periodYear  Int
+  periodMonth Int // 1-12
+  amountPaid  Decimal @db.Decimal(12, 2)
+  paidAt      DateTime @default(now())
+
+  markedByUserId String
+  markedBy       User   @relation("PaymentMarkedBy", fields: [markedByUserId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([expenseId, periodYear, periodMonth])
+}
