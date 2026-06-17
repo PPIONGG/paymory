@@ -45,3 +45,25 @@ npm run dev
 - [x] Phase 5 — รายละเอียด + ค้นหา/กรอง
 - [x] Phase 6 — ขัดเกลา UX
 - [ ] Phase 7 — deploy ขึ้น VPS
+
+## VPS URLs
+
+Temporary no-domain layout:
+
+- Launcher: `http://187.127.110.15/`
+- Paymory: `http://187.127.110.15/paymory/`
+- Paymory login: `http://187.127.110.15/paymory/login`
+- Paymory API health: `http://187.127.110.15/paymory/api/health`
+
+Local development still uses:
+
+- Web: `http://localhost:5173`
+- API: `http://localhost:4000/api/health`
+
+Deploy the current frontend build and launcher to the VPS:
+
+```powershell
+npm run deploy:vps
+```
+
+This command uses the local SSH alias `paymory-vps`, builds the client, uploads `client/dist` and `deploy/launcher/index.html`, reloads nginx, and checks the public URLs.

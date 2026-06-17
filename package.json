@@ -10,7 +10,8 @@
     "dev": "concurrently -n client,server -c blue,green \"npm:dev:client\" \"npm:dev:server\"",
     "dev:client": "npm run dev -w client",
     "dev:server": "npm run dev -w server",
-    "build": "npm run build -w client"
+    "build": "npm run build -w client",
+    "deploy:vps": "powershell -ExecutionPolicy Bypass -File scripts/deploy-vps.ps1"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"

@@ -5,9 +5,11 @@ import './index.css'
 import App from './App.tsx'
 import { AuthProvider } from './auth'
 
+const basePath = (import.meta.env.VITE_BASE_PATH || '/').replace(/\/$/, '')
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={basePath}>
       <AuthProvider>
         <App />
       </AuthProvider>
