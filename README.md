@@ -67,3 +67,5 @@ npm run deploy:vps
 ```
 
 This command uses the local SSH alias `paymory-vps`, builds the client, uploads `client/dist` and `deploy/launcher/index.html`, reloads nginx, and checks the public URLs.
+
+Full step-by-step notes are in [`docs/VPS_DEPLOY_GUIDE.md`](docs/VPS_DEPLOY_GUIDE.md).
